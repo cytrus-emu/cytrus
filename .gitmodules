@@ -1,0 +1,93 @@
+[submodule "externals/boost"]
+	path = externals/boost
+	url = https://github.com/cytrus-emu/boost
+[submodule "externals/nihstro"]
+	path = externals/nihstro
+	url = https://github.com/neobrain/nihstro
+[submodule "externals/soundtouch"]
+	path = externals/soundtouch
+	url = https://codeberg.org/soundtouch/soundtouch
+[submodule "externals/catch2"]
+	path = externals/catch2
+	url = https://github.com/catchorg/Catch2
+[submodule "externals/dynarmic"]
+	path = externals/dynarmic
+	url = https://github.com/cytrus-emu/dynarmic
+[submodule "externals/xbyak"]
+	path = externals/xbyak
+	url = https://github.com/herumi/xbyak
+[submodule "externals/fmt"]
+	path = externals/fmt
+	url = https://github.com/fmtlib/fmt
+[submodule "externals/enet"]
+	path = externals/enet
+	url = https://github.com/lsalzman/enet
+[submodule "externals/inih/inih"]
+	path = externals/inih/inih
+	url = https://github.com/benhoyt/inih
+[submodule "externals/libressl"]
+	path = externals/libressl
+	url = https://github.com/cytrus-emu/libressl-portable
+[submodule "externals/libusb/libusb"]
+	path = externals/libusb/libusb
+	url = https://github.com/libusb/libusb
+[submodule "externals/cubeb"]
+	path = externals/cubeb
+	url = https://github.com/mozilla/cubeb
+[submodule "externals/discord-rpc"]
+	path = externals/discord-rpc
+	url = https://github.com/cytrus-emu/discord-rpc
+[submodule "externals/cpp-jwt"]
+	path = externals/cpp-jwt
+	url = https://github.com/arun11299/cpp-jwt
+[submodule "externals/teakra"]
+	path = externals/teakra
+	url = https://github.com/wwylele/teakra
+[submodule "externals/lodepng/lodepng"]
+	path = externals/lodepng/lodepng
+	url = https://github.com/lvandeve/lodepng
+[submodule "externals/zstd"]
+	path = externals/zstd
+	url = https://github.com/facebook/zstd
+[submodule "externals/libyuv"]
+	path = externals/libyuv
+	url = https://github.com/lemenkov/libyuv
+[submodule "externals/sdl2/SDL"]
+	path = externals/sdl2/SDL
+	url = https://github.com/libsdl-org/SDL
+[submodule "externals/cryptopp-cmake"]
+	path = externals/cryptopp-cmake
+	url = https://github.com/abdes/cryptopp-cmake
+[submodule "externals/cryptopp"]
+	path = externals/cryptopp
+	url = https://github.com/weidai11/cryptopp
+[submodule "externals/dds-ktx"]
+	path = externals/dds-ktx
+	url = https://github.com/septag/dds-ktx
+[submodule "externals/openal-soft"]
+	path = externals/openal-soft
+	url = https://github.com/kcat/openal-soft
+[submodule "externals/glslang"]
+	path = externals/glslang
+	url = https://github.com/KhronosGroup/glslang
+[submodule "externals/vma"]
+	path = externals/vma
+	url = https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator
+[submodule "externals/vulkan-headers"]
+	path = externals/vulkan-headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers
+[submodule "externals/sirit"]
+	path = externals/sirit
+	url = https://github.com/cytrus-emu/sirit
+[submodule "externals/faad2/faad2"]
+	path = externals/faad2/faad2
+	url = https://github.com/knik0/faad2
+[submodule "externals/library-headers"]
+	path = externals/library-headers
+	url = https://github.com/cytrus-emu/library-headers
+[submodule "externals/libadrenotools"]
+	path = externals/libadrenotools
+	url = https://github.com/bylaws/libadrenotools
+[submodule "externals/oaknut"]
+	path = externals/oaknut
+	url = https://github.com/cytrus-emu/oaknut
