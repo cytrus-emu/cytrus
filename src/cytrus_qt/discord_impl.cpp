@@ -18,7 +18,7 @@ DiscordImpl::DiscordImpl(const Core::System& system_) : system{system_} {
 
     // The number is the client ID for Cytrus, it's used for images and the
     // application name
-    Discord_Initialize("719647875465871400", &handlers, 1, nullptr);
+    Discord_Initialize("1288168516196892702", &handlers, 1, nullptr);
 }
 
 DiscordImpl::~DiscordImpl() {
