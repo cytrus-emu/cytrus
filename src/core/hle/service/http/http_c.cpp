@@ -108,8 +108,8 @@ constexpr Result ErrorIncompatibleSendPostData = // 0xD8A0A036
     Result(ErrCodes::IncompatibleSendPostData, ErrorModule::HTTP, ErrorSummary::InvalidState,
            ErrorLevel::Permanent);
 
-// Splits URL into its components. Example: https://citra-emu.org:443/index.html
-// is_https: true; host: citra-emu.org; port: 443; path: /index.html
+// Splits URL into its components. Example: https://cytrus-emu.org:443/index.html
+// is_https: true; host: cytrus-emu.org; port: 443; path: /index.html
 static URLInfo SplitUrl(const std::string& url) {
     const std::string prefix = "://";
     constexpr int default_http_port = 80;
@@ -560,7 +560,7 @@ void HTTP_C::BeginRequest(Kernel::HLERequestContext& ctx) {
 
     Context& http_context = GetContext(context_handle);
 
-    // This should never happen in real hardware, but can happen on citra.
+    // This should never happen in real hardware, but can happen on cytrus.
     if (http_context.uses_default_client_cert && !http_context.clcert_data->init) {
         LOG_ERROR(Service_HTTP, "Failed to begin HTTP request: client cert not found.");
         IPC::RequestBuilder rb = rp.MakeBuilder(1, 0);
@@ -598,7 +598,7 @@ void HTTP_C::BeginRequestAsync(Kernel::HLERequestContext& ctx) {
 
     Context& http_context = GetContext(context_handle);
 
-    // This should never happen in real hardware, but can happen on citra.
+    // This should never happen in real hardware, but can happen on cytrus.
     if (http_context.uses_default_client_cert && !http_context.clcert_data->init) {
         LOG_ERROR(Service_HTTP, "Failed to begin HTTP request: client cert not found.");
         IPC::RequestBuilder rb = rp.MakeBuilder(1, 0);

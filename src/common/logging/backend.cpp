@@ -13,7 +13,7 @@
 #define _SH_DENYWR 0
 #endif
 
-#ifdef CITRA_LINUX_GCC_BACKTRACE
+#ifdef CYTRUS_LINUX_GCC_BACKTRACE
 #define BOOST_STACKTRACE_USE_BACKTRACE
 #include <boost/stacktrace.hpp>
 #undef BOOST_STACKTRACE_USE_BACKTRACE
@@ -181,7 +181,7 @@ public:
 
 bool initialization_in_progress_suppress_logging = true;
 
-#ifdef CITRA_LINUX_GCC_BACKTRACE
+#ifdef CYTRUS_LINUX_GCC_BACKTRACE
 [[noreturn]] void SleepForever() {
     while (true) {
         pause();
@@ -250,7 +250,7 @@ public:
 private:
     Impl(const std::string& file_backend_filename, const Filter& filter_)
         : filter{filter_}, file_backend{file_backend_filename} {
-#ifdef CITRA_LINUX_GCC_BACKTRACE
+#ifdef CYTRUS_LINUX_GCC_BACKTRACE
         int waker_pipefd[2];
         int done_printing_pipefd[2];
         if (pipe2(waker_pipefd, O_CLOEXEC) || pipe2(done_printing_pipefd, O_CLOEXEC)) {
@@ -259,7 +259,7 @@ private:
         backtrace_thread_waker_fd = waker_pipefd[1];
         backtrace_done_printing_fd = done_printing_pipefd[0];
         std::thread([this, wait_fd = waker_pipefd[0], done_fd = done_printing_pipefd[1]] {
-            Common::SetCurrentThreadName("citra:Crash");
+            Common::SetCurrentThreadName("cytrus:Crash");
             for (u8 ignore = 0; read(wait_fd, &ignore, 1) != 1;)
                 ;
             const int sig = received_signal;
@@ -304,7 +304,7 @@ private:
     }
 
     ~Impl() {
-#ifdef CITRA_LINUX_GCC_BACKTRACE
+#ifdef CYTRUS_LINUX_GCC_BACKTRACE
         if (int zero_or_ignore = 0;
             !received_signal.compare_exchange_strong(zero_or_ignore, SIGKILL)) {
             SleepForever();
@@ -314,7 +314,7 @@ private:
 
     void StartBackendThread() {
         backend_thread = std::jthread([this](std::stop_token stop_token) {
-            Common::SetCurrentThreadName("citra:Log");
+            Common::SetCurrentThreadName("cytrus:Log");
             Entry entry;
             const auto write_logs = [this, &entry]() {
                 ForEachBackend([&entry](Backend& backend) { backend.Write(entry); });
@@ -373,7 +373,7 @@ private:
         delete ptr;
     }
 
-#ifdef CITRA_LINUX_GCC_BACKTRACE
+#ifdef CYTRUS_LINUX_GCC_BACKTRACE
     [[noreturn]] static void HandleSignal(int sig) {
         signal(SIGABRT, SIG_DFL);
         signal(SIGSEGV, SIG_DFL);
@@ -417,7 +417,7 @@ private:
     std::chrono::steady_clock::time_point time_origin{std::chrono::steady_clock::now()};
     std::jthread backend_thread;
 
-#ifdef CITRA_LINUX_GCC_BACKTRACE
+#ifdef CYTRUS_LINUX_GCC_BACKTRACE
     std::atomic_int received_signal{0};
     std::array<u8, 4096> backtrace_storage{};
     int backtrace_thread_waker_fd;

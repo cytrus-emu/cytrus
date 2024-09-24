@@ -26,7 +26,7 @@ val downloadedJniLibsPath = "${buildDir}/downloadedJniLibs"
 
 @Suppress("UnstableApiUsage")
 android {
-    namespace = "org.citra.citra_emu"
+    namespace = "org.cytrus.cytrus_emu"
     compileSdk = 35
 
     ndkVersion = "27.1.12297006"
@@ -61,7 +61,7 @@ android {
 
     defaultConfig {
         // TODO If this is ever modified, change application_id in strings.xml
-        applicationId = "org.citra.citra_emu"
+        applicationId = "org.cytrus.cytrus_emu"
         minSdk = 33
         // noinspection EditedTargetSdkVersion
         targetSdk = 35

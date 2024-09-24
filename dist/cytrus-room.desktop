@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Cytrus Room
+Comment=Multiplayer room host for Cytrus
+Icon=cytrus
+TryExec=cytrus-room
+Exec=cytrus-room %f
+Categories=Game;Emulator;
+Keywords=3DS;Nintendo

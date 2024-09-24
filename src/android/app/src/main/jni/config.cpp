@@ -148,7 +148,8 @@ void Config::ReadValues() {
     ReadSetting("Renderer", Settings::values.texture_filter);
     ReadSetting("Renderer", Settings::values.texture_sampling);
 
-    // Work around to map Android setting for enabling the frame limiter to the format Citra expects
+    // Work around to map Android setting for enabling the frame limiter to the format Cytrus
+    // expects
     if (sdl2_config->GetBoolean("Renderer", "use_frame_limit", true)) {
         ReadSetting("Renderer", Settings::values.frame_limit);
     } else {
@@ -267,9 +268,10 @@ void Config::ReadValues() {
     NetSettings::values.enable_telemetry =
         sdl2_config->GetBoolean("WebService", "enable_telemetry", false);
     NetSettings::values.web_api_url =
-        sdl2_config->GetString("WebService", "web_api_url", "https://api.citra-emu.org");
-    NetSettings::values.citra_username = sdl2_config->GetString("WebService", "citra_username", "");
-    NetSettings::values.citra_token = sdl2_config->GetString("WebService", "citra_token", "");
+        sdl2_config->GetString("WebService", "web_api_url", "https://api.cytrus-emu.org");
+    NetSettings::values.cytrus_username =
+        sdl2_config->GetString("WebService", "cytrus_username", "");
+    NetSettings::values.cytrus_token = sdl2_config->GetString("WebService", "cytrus_token", "");
 }
 
 void Config::Reload() {

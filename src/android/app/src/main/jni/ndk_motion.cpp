@@ -62,7 +62,7 @@ class NDKMotion final : public Input::MotionDevice {
     }
 
     void Construct() {
-        sensor_manager = ASensorManager_getInstanceForPackage("org.citra.citra_emu");
+        sensor_manager = ASensorManager_getInstanceForPackage("org.cytrus.cytrus_emu");
         looper = ALooper_prepare(ALOOPER_PREPARE_ALLOW_NON_CALLBACKS);
         if (!sensor_manager || !looper) {
             LOG_CRITICAL(Input, "Could not retrieve sensor manager");

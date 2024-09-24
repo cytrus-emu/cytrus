@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
-    <Name>Citra</Name>
+    <Name>Cytrus</Name>
     <Version>1.0.0</Version>
-    <Title>Citra Updater</Title>
-    <Publisher>Citra Team</Publisher>
-    <!-- e.g. /Applications/Citra -->
-    <TargetDir>@ApplicationsDir@/Citra</TargetDir>
+    <Title>Cytrus Updater</Title>
+    <Publisher>Cytrus Team</Publisher>
+    <!-- e.g. /Applications/Cytrus -->
+    <TargetDir>@ApplicationsDir@/Cytrus</TargetDir>
     <InstallerApplicationIcon>icon</InstallerApplicationIcon>
     <InstallerWindowIcon>icon.png</InstallerWindowIcon>
     <RemoteRepositories>
         <Repository>
-            <Url>https://repo.citra-emu.org</Url>
+            <Url>https://repo.cytrus-emu.org</Url>
             <Enabled>1</Enabled>
-            <DisplayName>Official Citra Repository</DisplayName>
+            <DisplayName>Official Cytrus Repository</DisplayName>
         </Repository>
     </RemoteRepositories>
 </Installer>

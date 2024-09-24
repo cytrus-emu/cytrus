@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="cytrus_primary">#B7C4FF</color>
+    <color name="cytrus_onPrimary">#002681</color>
+    <color name="cytrus_primaryContainer">#0039B5</color>
+    <color name="cytrus_onPrimaryContainer">#DCE1FF</color>
+    <color name="cytrus_secondary">#C2C5DD</color>
+    <color name="cytrus_onSecondary">#2B3042</color>
+    <color name="cytrus_secondaryContainer">#424659</color>
+    <color name="cytrus_onSecondaryContainer">#DEE1F9</color>
+    <color name="cytrus_tertiary">#E4BADA</color>
+    <color name="cytrus_onTertiary">#43273F</color>
+    <color name="cytrus_tertiaryContainer">#5C3D56</color>
+    <color name="cytrus_onTertiaryContainer">#FFD7F5</color>
+    <color name="cytrus_error">#FFB4AB</color>
+    <color name="cytrus_errorContainer">#93000A</color>
+    <color name="cytrus_onError">#690005</color>
+    <color name="cytrus_onErrorContainer">#FFDAD6</color>
+    <color name="cytrus_background">#1B1B1F</color>
+    <color name="cytrus_onBackground">#E4E1E6</color>
+    <color name="cytrus_surface">#1B1B1F</color>
+    <color name="cytrus_onSurface">#E4E1E6</color>
+    <color name="cytrus_surfaceVariant">#45464F</color>
+    <color name="cytrus_onSurfaceVariant">#C6C5D0</color>
+    <color name="cytrus_outline">#90909A</color>
+    <color name="cytrus_inverseOnSurface">#1B1B1F</color>
+    <color name="cytrus_inverseSurface">#E4E1E6</color>
+    <color name="cytrus_inversePrimary">#154FE2</color>
+    <color name="cytrus_shadow">#000000</color>
+    <color name="cytrus_surfaceTint">#B7C4FF</color>
+    <color name="cytrus_outlineVariant">#45464F</color>
+    <color name="cytrus_scrim">#000000</color>
+
+</resources>

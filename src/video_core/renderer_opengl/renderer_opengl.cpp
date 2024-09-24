@@ -75,8 +75,8 @@ static std::array<GLfloat, 3 * 2> MakeOrthographicMatrix(const float width, cons
 RendererOpenGL::RendererOpenGL(Core::System& system, Pica::PicaCore& pica_,
                                Frontend::EmuWindow& window, Frontend::EmuWindow* secondary_window)
     : VideoCore::RendererBase{system, window, secondary_window}, pica{pica_},
-      driver{system.TelemetrySession()}, rasterizer{system.Memory(), pica,
-                                                    system.CustomTexManager(), *this, driver},
+      driver{system.TelemetrySession()},
+      rasterizer{system.Memory(), pica, system.CustomTexManager(), *this, driver},
       frame_dumper{system, window} {
     const bool has_debug_tool = driver.HasDebugTool();
     window.mailbox = std::make_unique<OGLTextureMailbox>(has_debug_tool);
@@ -273,7 +273,7 @@ void RendererOpenGL::LoadFBToScreenInfo(const Pica::FramebufferConfig& framebuff
         // Update existing texture
         // TODO: Test what happens on hardware when you change the framebuffer dimensions so that
         //       they differ from the LCD resolution.
-        // TODO: Applications could theoretically crash Citra here by specifying too large
+        // TODO: Applications could theoretically crash Cytrus here by specifying too large
         //       framebuffer sizes. We should make sure that this cannot happen.
         glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, framebuffer.width, framebuffer.height,
                         screen_info.texture.gl_format, screen_info.texture.gl_type,

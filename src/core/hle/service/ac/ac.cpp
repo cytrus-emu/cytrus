@@ -120,7 +120,7 @@ void Module::Interface::GetCurrentAPInfo(Kernel::HLERequestContext& ctx) {
         return;
     }
 
-    constexpr const char* citra_ap = "Citra_AP";
+    constexpr const char* cytrus_ap = "Cytrus_AP";
     constexpr s16 good_signal_strength = 60;
     constexpr u8 unknown1_value = 6;
     constexpr u8 unknown2_value = 5;
@@ -131,7 +131,7 @@ void Module::Interface::GetCurrentAPInfo(Kernel::HLERequestContext& ctx) {
     SharedPage::MacAddress mac = shared_page.GetMacAddress();
 
     APInfo info{
-        .ssid_len = static_cast<u32>(std::strlen(citra_ap)),
+        .ssid_len = static_cast<u32>(std::strlen(cytrus_ap)),
         .bssid = mac,
         .padding = 0,
         .signal_strength = good_signal_strength,
@@ -141,7 +141,7 @@ void Module::Interface::GetCurrentAPInfo(Kernel::HLERequestContext& ctx) {
         .unknown3 = unknown3_value,
         .unknown4 = unknown4_value,
     };
-    std::strncpy(info.ssid.data(), citra_ap, info.ssid.size());
+    std::strncpy(info.ssid.data(), cytrus_ap, info.ssid.size());
 
     std::vector<u8> out_info(len);
     std::memcpy(out_info.data(), &info, std::min(len, static_cast<u32>(sizeof(info))));
@@ -366,17 +366,17 @@ Module::Module(Core::System& system_) : system(system_) {}
 
 template <class Archive>
 void Module::serialize(Archive& ar, const unsigned int) {
-    ar& ac_connected;
-    ar& close_event;
-    ar& connect_event;
-    ar& disconnect_event;
+    ar & ac_connected;
+    ar & close_event;
+    ar & connect_event;
+    ar & disconnect_event;
     u32 connect_result_32 = connect_result.raw;
-    ar& connect_result_32;
+    ar & connect_result_32;
     connect_result.raw = connect_result_32;
     u32 close_result_32 = close_result.raw;
-    ar& close_result_32;
+    ar & close_result_32;
     close_result.raw = close_result_32;
-    ar& connected_pids;
+    ar & connected_pids;
     // default_config is never written to
 }
 SERIALIZE_IMPL(Module)
