@@ -253,6 +253,12 @@ class InputOverlayDrawableDpad(
         pressedTwoDirectionsStateBitmap.setBounds(left, top, right, bottom)
     }
 
+    fun setOpacity(opacity: Int) {
+        defaultStateBitmap.alpha = opacity
+        pressedOneDirectionStateBitmap.alpha = opacity
+        pressedTwoDirectionsStateBitmap.alpha = opacity
+    }
+
     val bounds: Rect
         get() = defaultStateBitmap.bounds
 

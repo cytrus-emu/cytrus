@@ -102,6 +102,8 @@
     <string name="search_installed">Installed</string>
 
     <!-- Input related strings -->
+    <string name="title_play_haptics" translatable="false">Play Haptics</string>
+    <string name="description_play_haptics" translatable="false">Plays a haptic vibration when an on-screen button is pressed and released</string>
     <string name="controller_circlepad">Circle Pad</string>
     <string name="controller_c">C-Stick</string>
     <string name="controller_hotkeys">Hotkeys</string>
@@ -116,6 +118,7 @@
     <string name="input_binding_description">Press or move an input to bind it to %1$s.</string>
     <string name="input_binding_description_vertical_axis">Move your joystick up or down.</string>
     <string name="input_binding_description_horizontal_axis">Move your joystick left or right.</string>
+    <string name="play_haptics" translatable="false">Play Haptics</string>
     <string name="button_a" translatable="false">A</string>
     <string name="button_b" translatable="false">B</string>
     <string name="button_select" translatable="false">SELECT</string>
@@ -156,6 +159,9 @@
     <string name="home_menu">HOME Menu</string>
     <string name="home_menu_warning">System Files Warning</string>
     <string name="home_menu_warning_description">Due to how slow Android\'s storage access framework is for accessing Cytrus\'s files, downloading multiple versions of system files can dramatically slow down loading for games, save states, and the games list. Only download the files that you require to avoid any issues with loading speeds.</string>
+
+    <!-- Generic haptics -->
+    <string name="generic_haptics">Haptics</string>
 
     <!-- Generic buttons (Shared with lots of stuff) -->
     <string name="generic_buttons">Buttons</string>
@@ -328,6 +334,7 @@
     <string name="emulation_edit_layout">Edit Layout</string>
     <string name="emulation_done">Done</string>
     <string name="emulation_toggle_controls">Toggle Controls</string>
+    <string name="emulation_control_opacity">Adjust Opacity</string>
     <string name="emulation_control_scale">Adjust Scale</string>
     <string name="emulation_control_joystick_rel_center">Relative Stick Center</string>
     <string name="emulation_control_dpad_slide_enable">D-Pad Sliding</string>

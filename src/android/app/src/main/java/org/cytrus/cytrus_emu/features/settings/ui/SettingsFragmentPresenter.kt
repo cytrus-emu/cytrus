@@ -12,6 +12,7 @@ import android.hardware.camera2.CameraManager
 import android.os.Build
 import android.text.TextUtils
 import androidx.preference.PreferenceManager
+import okhttp3.Headers
 import org.cytrus.cytrus_emu.CytrusApplication
 import org.cytrus.cytrus_emu.R
 import org.cytrus.cytrus_emu.features.settings.model.AbstractBooleanSetting
@@ -591,6 +592,17 @@ class SettingsFragmentPresenter(private val fragmentView: SettingsFragmentView) 
     private fun addControlsSettings(sl: ArrayList<SettingsItem>) {
         settingsActivity.setToolbarTitle(settingsActivity.getString(R.string.preferences_controls))
         sl.apply {
+            add(HeaderSetting(R.string.generic_haptics))
+            add(
+                SwitchSetting(
+                    BooleanSetting.PLAY_HAPTICS,
+                    R.string.title_play_haptics,
+                    R.string.description_play_haptics,
+                    BooleanSetting.PLAY_HAPTICS.key,
+                    BooleanSetting.PLAY_HAPTICS.defaultValue,
+                )
+            )
+
             add(HeaderSetting(R.string.generic_buttons))
             Settings.buttonKeys.forEachIndexed { i: Int, key: String ->
                 val button = getInputObject(key)

@@ -121,6 +121,11 @@ class InputOverlayDrawableButton(
         pressedStateBitmap.setBounds(left, top, right, bottom)
     }
 
+    fun setOpacity(opacity: Int) {
+        defaultStateBitmap.alpha = opacity
+        pressedStateBitmap.alpha = opacity
+    }
+
     val status: Int
         get() = if (pressedState) NativeLibrary.ButtonState.PRESSED else NativeLibrary.ButtonState.RELEASED
     val bounds: Rect

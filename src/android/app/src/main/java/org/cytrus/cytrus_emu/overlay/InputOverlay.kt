@@ -15,6 +15,7 @@ import android.graphics.Rect
 import android.graphics.drawable.VectorDrawable
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.view.HapticFeedbackConstants
 import android.view.MotionEvent
 import android.view.SurfaceView
 import android.view.View
@@ -24,6 +25,7 @@ import androidx.preference.PreferenceManager
 import org.cytrus.cytrus_emu.CytrusApplication
 import org.cytrus.cytrus_emu.NativeLibrary
 import org.cytrus.cytrus_emu.R
+import org.cytrus.cytrus_emu.features.settings.model.BooleanSetting
 import org.cytrus.cytrus_emu.utils.EmulationMenuSettings
 import java.lang.NullPointerException
 import kotlin.math.min
@@ -86,6 +88,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 continue
             }
             NativeLibrary.onGamePadEvent(NativeLibrary.TouchScreenDevice, button.id, button.status)
+            playHaptics(event)
             shouldUpdateView = true
         }
         for (dpad in overlayDpads) {
@@ -108,6 +111,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 dpad.rightId,
                 dpad.rightStatus
             )
+            playHaptics(event)
             shouldUpdateView = true
         }
         for (joystick in overlayJoysticks) {
@@ -121,6 +125,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 joystick.xAxis,
                 joystick.yAxis
             )
+            playHaptics(event)
             shouldUpdateView = true
         }
 
@@ -896,6 +901,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
             val pressedStateBitmap = getBitmap(context, pressedResId, scale)
             val overlayDrawable =
                 InputOverlayDrawableButton(res, defaultStateBitmap, pressedStateBitmap, buttonId)
+            overlayDrawable.setOpacity(preferences.getInt("controlOpacity", 1))
 
             // The X and Y coordinates of the InputOverlayDrawableButton on the InputOverlay.
             // These were set in the input overlay configuration menu.
@@ -961,6 +967,7 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 buttonLeft,
                 buttonRight
             )
+            overlayDrawable.setOpacity(preferences.getInt("controlOpacity", 1))
 
             // The X and Y coordinates of the InputOverlayDrawableDpad on the InputOverlay.
             // These were set in the input overlay configuration menu.
@@ -1042,10 +1049,25 @@ class InputOverlay(context: Context?, attrs: AttributeSet?) : SurfaceView(contex
                 innerRect,
                 joystick
             )
+            overlayDrawable.setOpacity(preferences.getInt("controlOpacity", 1))
 
             // Need to set the image's position
             overlayDrawable.setPosition(drawableX, drawableY)
             return overlayDrawable
+        }
+    }
+
+    private fun playHaptics(event: MotionEvent) {
+        if (BooleanSetting.PLAY_HAPTICS.boolean) {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN,
+                MotionEvent.ACTION_POINTER_DOWN ->
+                    performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
+
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_POINTER_UP ->
+                    performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY_RELEASE)
+            }
         }
     }
 }

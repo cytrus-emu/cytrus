@@ -110,6 +110,8 @@ class Settings {
         const val SECTION_DEBUG = "Debugging"
         const val SECTION_THEME = "Theme"
 
+        const val KEY_HAPTICS = "play_haptics"
+
         const val KEY_BUTTON_A = "button_a"
         const val KEY_BUTTON_B = "button_b"
         const val KEY_BUTTON_X = "button_x"
@@ -136,6 +138,13 @@ class Settings {
         const val HOTKEY_CYCLE_LAYOUT = "hotkey_toggle_layout"
         const val HOTKEY_CLOSE_GAME = "hotkey_close_game"
         const val HOTKEY_PAUSE_OR_RESUME = "hotkey_pause_or_resume_game"
+
+        val hapticsKey = listOf(
+            KEY_HAPTICS
+        )
+        val hapticsTitle = listOf(
+            R.string.play_haptics
+        )
 
         val buttonKeys = listOf(
             KEY_BUTTON_A,
