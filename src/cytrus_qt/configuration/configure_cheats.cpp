@@ -59,7 +59,7 @@ void ConfigureCheats::LoadCheats() {
             i, 2, new QTableWidgetItem(QString::fromStdString(cheats[i]->GetType())));
         enabled->setProperty("row", static_cast<int>(i));
 
-        connect(enabled, &QCheckBox::stateChanged, this, &ConfigureCheats::OnCheckChanged);
+        connect(enabled, &QCheckBox::checkStateChanged, this, &ConfigureCheats::OnCheckChanged);
     }
 }
 

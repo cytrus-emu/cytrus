@@ -60,7 +60,7 @@ else()
 endif()
 
 option(ENABLE_SDL2 "Enable using SDL2" ON)
-CMAKE_DEPENDENT_OPTION(ENABLE_SDL2_FRONTEND "Enable the SDL2 frontend" ON "ENABLE_SDL2;NOT ANDROID AND NOT IOS" OFF)
+CMAKE_DEPENDENT_OPTION(ENABLE_SDL2_FRONTEND "Enable the SDL2 frontend" OFF "ENABLE_SDL2;NOT ANDROID AND NOT IOS" OFF)
 option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
 
 # Set bundled qt as dependent options.
@@ -68,7 +68,7 @@ option(ENABLE_QT "Enable the Qt frontend" ON)
 option(ENABLE_QT_TRANSLATION "Enable translations for the Qt frontend" OFF)
 CMAKE_DEPENDENT_OPTION(ENABLE_QT_UPDATER "Enable built-in updater for the Qt frontend" ON "NOT IOS" OFF)
 
-CMAKE_DEPENDENT_OPTION(ENABLE_TESTS "Enable generating tests executable" ON "NOT IOS" OFF)
+CMAKE_DEPENDENT_OPTION(ENABLE_TESTS "Enable generating tests executable" OFF "NOT IOS" OFF)
 CMAKE_DEPENDENT_OPTION(ENABLE_DEDICATED_ROOM "Enable generating dedicated room executable" ON "NOT ANDROID AND NOT IOS" OFF)
 
 option(ENABLE_WEB_SERVICE "Enable web services (telemetry, etc.)" ON)
@@ -215,7 +215,11 @@ message(STATUS "Target architecture: ${ARCHITECTURE}")
 add_definitions(-DBOOST_ASIO_DISABLE_CONCEPTS)
 # boost can have issues compiling with C++17 and up on newer versions of Clang.
 add_definitions(-DBOOST_NO_CXX98_FUNCTION_BASE)
+if (WIN32)
+set(CMAKE_CXX_STANDARD 23)
+else()
 set(CMAKE_CXX_STANDARD 20)
+endif()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Apply consistent visibility settings.
@@ -235,7 +239,7 @@ find_package(Threads REQUIRED)
 
 if (ENABLE_QT)
     if (NOT USE_SYSTEM_QT)
-        download_qt(6.6.0)
+        download_qt(6.8.2)
     endif()
 
     find_package(Qt6 REQUIRED COMPONENTS Widgets Multimedia Concurrent)
@@ -410,11 +414,11 @@ endif()
 
 # SDL2
 if (ENABLE_SDL2 AND USE_SYSTEM_SDL2)
-    find_package(SDL2 REQUIRED)
-    add_library(SDL2 INTERFACE)
-    target_link_libraries(SDL2 INTERFACE "${SDL2_LIBRARY}")
-    target_include_directories(SDL2 INTERFACE "${SDL2_INCLUDE_DIR}")
-    add_library(SDL2::SDL2 ALIAS SDL2)
+    find_package(SDL3 REQUIRED)
+    add_library(SDL3 INTERFACE)
+    target_link_libraries(SDL3 INTERFACE "${SDL3_LIBRARY}")
+    target_include_directories(SDL3 INTERFACE "${SDL3_INCLUDE_DIR}")
+    add_library(SDL3::SDL3 ALIAS SDL3)
 endif()
 
 if (ENABLE_LIBUSB AND USE_SYSTEM_LIBUSB)

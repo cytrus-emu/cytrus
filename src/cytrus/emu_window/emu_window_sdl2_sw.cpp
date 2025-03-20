@@ -6,8 +6,8 @@
 #include <cstdlib>
 #include <string>
 #define SDL_MAIN_HANDLED
-#include <SDL.h>
-#include <SDL_rect.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_rect.h>
 #include "common/scm_rev.h"
 #include "common/settings.h"
 #include "core/core.h"
@@ -22,12 +22,8 @@ EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, boo
     : EmuWindow_SDL2{system_, is_secondary}, system{system_} {
     std::string window_title = fmt::format("Cytrus {} | {}-{}", Common::g_build_fullname,
                                            Common::g_scm_branch, Common::g_scm_desc);
-    render_window =
-        SDL_CreateWindow(window_title.c_str(),
-                         SDL_WINDOWPOS_UNDEFINED, // x position
-                         SDL_WINDOWPOS_UNDEFINED, // y position
-                         Core::kScreenTopWidth, Core::kScreenTopHeight + Core::kScreenBottomHeight,
-                         SDL_WINDOW_SHOWN);
+    render_window = SDL_CreateWindow(window_title.c_str(), Core::kScreenTopWidth,
+                                     Core::kScreenTopHeight + Core::kScreenBottomHeight, 0);
 
     if (render_window == nullptr) {
         LOG_CRITICAL(Frontend, "Failed to create SDL2 window: {}", SDL_GetError());
@@ -83,7 +79,7 @@ void EmuWindow_SDL2_SW::Present() {
                               static_cast<int>(dst_rect.GetHeight())};
             SDL_Surface* screen = LoadFramebuffer(screen_id);
             SDL_BlitSurface(screen, nullptr, window_surface, &sdl_rect);
-            SDL_FreeSurface(screen);
+            SDL_DestroySurface(screen);
         };
 
         draw_screen(ScreenId::TopLeft);
@@ -99,8 +95,7 @@ SDL_Surface* EmuWindow_SDL2_SW::LoadFramebuffer(VideoCore::ScreenId screen_id) {
     const auto& info = renderer.Screen(screen_id);
     const int width = static_cast<int>(info.width);
     const int height = static_cast<int>(info.height);
-    SDL_Surface* surface =
-        SDL_CreateRGBSurfaceWithFormat(0, width, height, 0, SDL_PIXELFORMAT_ABGR8888);
+    SDL_Surface* surface = SDL_CreateSurface(width, height, SDL_PIXELFORMAT_ABGR8888);
     SDL_LockSurface(surface);
     std::memcpy(surface->pixels, info.pixels.data(), info.pixels.size());
     SDL_UnlockSurface(surface);

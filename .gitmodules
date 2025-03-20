@@ -91,3 +91,6 @@
 [submodule "externals/oaknut"]
 	path = externals/oaknut
 	url = https://github.com/cytrus-emu/oaknut
+[submodule "externals/sdl3/SDL"]
+	path = externals/sdl3/SDL
+	url = https://github.com/libsdl-org/sdl

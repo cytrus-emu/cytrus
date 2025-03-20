@@ -38,7 +38,7 @@ target_link_libraries(cytrus PRIVATE inih)
 if (MSVC)
     target_link_libraries(cytrus PRIVATE getopt)
 endif()
-target_link_libraries(cytrus PRIVATE ${PLATFORM_LIBRARIES} SDL2::SDL2 Threads::Threads)
+target_link_libraries(cytrus PRIVATE ${PLATFORM_LIBRARIES} SDL3::SDL3 Threads::Threads)
 
 if (ENABLE_OPENGL)
     target_link_libraries(cytrus PRIVATE glad)

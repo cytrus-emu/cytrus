@@ -7,7 +7,7 @@
 #include <sstream>
 #include <type_traits>
 #include <INIReader.h>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "common/file_util.h"
 #include "common/logging/backend.h"
 #include "common/logging/log.h"

@@ -6,7 +6,8 @@
 #include <cstdlib>
 #include <string>
 #define SDL_MAIN_HANDLED
-#include <SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 #include "common/logging/log.h"
 #include "common/scm_rev.h"
 #include "core/core.h"
@@ -16,21 +17,21 @@
 #include "input_common/motion_emu.h"
 #include "network/network.h"
 
-void EmuWindow_SDL2::OnMouseMotion(s32 x, s32 y) {
-    TouchMoved((unsigned)std::max(x, 0), (unsigned)std::max(y, 0));
-    InputCommon::GetMotionEmu()->Tilt(x, y);
+void EmuWindow_SDL2::OnMouseMotion(float x, float y) {
+    TouchMoved((unsigned)std::max(x, 0.f), (unsigned)std::max(y, 0.f));
+    InputCommon::GetMotionEmu()->Tilt((int)x, (int)y);
 }
 
-void EmuWindow_SDL2::OnMouseButton(u32 button, u8 state, s32 x, s32 y) {
+void EmuWindow_SDL2::OnMouseButton(u32 button, bool state, float x, float y) {
     if (button == SDL_BUTTON_LEFT) {
-        if (state == SDL_PRESSED) {
-            TouchPressed((unsigned)std::max(x, 0), (unsigned)std::max(y, 0));
+        if (state == true) {
+            TouchPressed((unsigned)std::max(x, 0.f), (unsigned)std::max(y, 0.f));
         } else {
             TouchReleased();
         }
     } else if (button == SDL_BUTTON_RIGHT) {
-        if (state == SDL_PRESSED) {
-            InputCommon::GetMotionEmu()->BeginTilt(x, y);
+        if (state == true) {
+            InputCommon::GetMotionEmu()->BeginTilt((int)x, (int)y);
         } else {
             InputCommon::GetMotionEmu()->EndTilt();
         }
@@ -66,10 +67,10 @@ void EmuWindow_SDL2::OnFingerUp() {
     TouchReleased();
 }
 
-void EmuWindow_SDL2::OnKeyEvent(int key, u8 state) {
-    if (state == SDL_PRESSED) {
+void EmuWindow_SDL2::OnKeyEvent(int key, bool state) {
+    if (state == true) {
         InputCommon::GetKeyboard()->PressKey(key);
-    } else if (state == SDL_RELEASED) {
+    } else if (state == true) {
         InputCommon::GetKeyboard()->ReleaseKey(key);
     }
 }
@@ -84,7 +85,7 @@ void EmuWindow_SDL2::RequestClose() {
 
 void EmuWindow_SDL2::OnResize() {
     int width, height;
-    SDL_GL_GetDrawableSize(render_window, &width, &height);
+    SDL_GetWindowSizeInPixels(render_window, &width, &height);
     UpdateCurrentFramebufferLayout(width, height);
 }
 
@@ -97,7 +98,8 @@ void EmuWindow_SDL2::Fullscreen() {
 
     // Try a different fullscreening method
     LOG_INFO(Frontend, "Attempting to use borderless fullscreen...");
-    if (SDL_SetWindowFullscreen(render_window, SDL_WINDOW_FULLSCREEN_DESKTOP) == 0) {
+    if (SDL_SetWindowFullscreen(render_window,
+                                SDL_GetWindowFullscreenMode(render_window) != nullptr) == 0) {
         return;
     }
 
@@ -117,7 +119,7 @@ EmuWindow_SDL2::~EmuWindow_SDL2() {
 }
 
 void EmuWindow_SDL2::InitializeSDL2() {
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMECONTROLLER) < 0) {
+    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_GAMEPAD) == false) {
         LOG_CRITICAL(Frontend, "Failed to initialize SDL2: {}! Exiting...", SDL_GetError());
         exit(1);
     }
@@ -130,34 +132,58 @@ void EmuWindow_SDL2::InitializeSDL2() {
 
 u32 EmuWindow_SDL2::GetEventWindowId(const SDL_Event& event) const {
     switch (event.type) {
-    case SDL_WINDOWEVENT:
+    case SDL_EVENT_WINDOW_SHOWN:
+    case SDL_EVENT_WINDOW_HIDDEN:
+    case SDL_EVENT_WINDOW_EXPOSED:
+    case SDL_EVENT_WINDOW_MOVED:
+    case SDL_EVENT_WINDOW_RESIZED:
+    case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+    case SDL_EVENT_WINDOW_METAL_VIEW_RESIZED:
+    case SDL_EVENT_WINDOW_MINIMIZED:
+    case SDL_EVENT_WINDOW_MAXIMIZED:
+    case SDL_EVENT_WINDOW_RESTORED:
+    case SDL_EVENT_WINDOW_MOUSE_ENTER:
+    case SDL_EVENT_WINDOW_MOUSE_LEAVE:
+    case SDL_EVENT_WINDOW_FOCUS_GAINED:
+    case SDL_EVENT_WINDOW_FOCUS_LOST:
+    case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+    case SDL_EVENT_WINDOW_HIT_TEST:
+    case SDL_EVENT_WINDOW_ICCPROF_CHANGED:
+    case SDL_EVENT_WINDOW_DISPLAY_CHANGED:
+    case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
+    case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+    case SDL_EVENT_WINDOW_OCCLUDED:
+    case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
+    case SDL_EVENT_WINDOW_LEAVE_FULLSCREEN:
+    case SDL_EVENT_WINDOW_DESTROYED:
+    case SDL_EVENT_WINDOW_HDR_STATE_CHANGED:
         return event.window.windowID;
-    case SDL_KEYDOWN:
-    case SDL_KEYUP:
+    case SDL_EVENT_KEY_DOWN:
+    case SDL_EVENT_KEY_UP:
         return event.key.windowID;
-    case SDL_MOUSEMOTION:
+    case SDL_EVENT_MOUSE_MOTION:
         return event.motion.windowID;
-    case SDL_MOUSEBUTTONDOWN:
-    case SDL_MOUSEBUTTONUP:
+    case SDL_EVENT_MOUSE_BUTTON_DOWN:
+    case SDL_EVENT_MOUSE_BUTTON_UP:
         return event.button.windowID;
-    case SDL_MOUSEWHEEL:
+    case SDL_EVENT_MOUSE_WHEEL:
         return event.wheel.windowID;
-    case SDL_FINGERDOWN:
-    case SDL_FINGERMOTION:
-    case SDL_FINGERUP:
+    case SDL_EVENT_FINGER_DOWN:
+    case SDL_EVENT_FINGER_MOTION:
+    case SDL_EVENT_FINGER_UP:
         return event.tfinger.windowID;
-    case SDL_TEXTEDITING:
+    case SDL_EVENT_TEXT_EDITING:
         return event.edit.windowID;
-    case SDL_TEXTEDITING_EXT:
-        return event.editExt.windowID;
-    case SDL_TEXTINPUT:
+    case SDL_EVENT_TEXT_EDITING_CANDIDATES:
+        return event.edit_candidates.windowID;
+    case SDL_EVENT_TEXT_INPUT:
         return event.text.windowID;
-    case SDL_DROPBEGIN:
-    case SDL_DROPFILE:
-    case SDL_DROPTEXT:
-    case SDL_DROPCOMPLETE:
+    case SDL_EVENT_DROP_BEGIN:
+    case SDL_EVENT_DROP_FILE:
+    case SDL_EVENT_DROP_TEXT:
+    case SDL_EVENT_DROP_COMPLETE:
         return event.drop.windowID;
-    case SDL_USEREVENT:
+    case SDL_EVENT_USER:
         return event.user.windowID;
     default:
         // Event is not for any particular window, so we can just pretend it's for this one.
@@ -177,47 +203,43 @@ void EmuWindow_SDL2::PollEvents() {
         }
 
         switch (event.type) {
-        case SDL_WINDOWEVENT:
-            switch (event.window.event) {
-            case SDL_WINDOWEVENT_SIZE_CHANGED:
-            case SDL_WINDOWEVENT_RESIZED:
-            case SDL_WINDOWEVENT_MAXIMIZED:
-            case SDL_WINDOWEVENT_RESTORED:
-            case SDL_WINDOWEVENT_MINIMIZED:
-                OnResize();
-                break;
-            case SDL_WINDOWEVENT_CLOSE:
-                RequestClose();
-                break;
-            }
+        case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+        case SDL_EVENT_WINDOW_RESIZED:
+        case SDL_EVENT_WINDOW_MAXIMIZED:
+        case SDL_EVENT_WINDOW_RESTORED:
+        case SDL_EVENT_WINDOW_MINIMIZED:
+            OnResize();
             break;
-        case SDL_KEYDOWN:
-        case SDL_KEYUP:
-            OnKeyEvent(static_cast<int>(event.key.keysym.scancode), event.key.state);
+        case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+            RequestClose();
             break;
-        case SDL_MOUSEMOTION:
+        case SDL_EVENT_KEY_DOWN:
+        case SDL_EVENT_KEY_UP:
+            OnKeyEvent(static_cast<int>(event.key.scancode), event.key.down);
+            break;
+        case SDL_EVENT_MOUSE_MOTION:
             // ignore if it came from touch
             if (event.button.which != SDL_TOUCH_MOUSEID)
                 OnMouseMotion(event.motion.x, event.motion.y);
             break;
-        case SDL_MOUSEBUTTONDOWN:
-        case SDL_MOUSEBUTTONUP:
+        case SDL_EVENT_MOUSE_BUTTON_DOWN:
+        case SDL_EVENT_MOUSE_BUTTON_UP:
             // ignore if it came from touch
             if (event.button.which != SDL_TOUCH_MOUSEID) {
-                OnMouseButton(event.button.button, event.button.state, event.button.x,
+                OnMouseButton(event.button.button, event.button.down, event.button.x,
                               event.button.y);
             }
             break;
-        case SDL_FINGERDOWN:
+        case SDL_EVENT_FINGER_DOWN:
             OnFingerDown(event.tfinger.x, event.tfinger.y);
             break;
-        case SDL_FINGERMOTION:
+        case SDL_EVENT_FINGER_MOTION:
             OnFingerMotion(event.tfinger.x, event.tfinger.y);
             break;
-        case SDL_FINGERUP:
+        case SDL_EVENT_FINGER_UP:
             OnFingerUp();
             break;
-        case SDL_QUIT:
+        case SDL_EVENT_QUIT:
             RequestClose();
             break;
         default:
@@ -239,7 +261,7 @@ void EmuWindow_SDL2::OnMinimalClientAreaChangeRequest(std::pair<u32, u32> minima
 }
 
 void EmuWindow_SDL2::UpdateFramerateCounter() {
-    const u32 current_time = SDL_GetTicks();
+    const u64 current_time = SDL_GetTicks();
     if (current_time > last_time + 2000) {
         const auto results = system.GetAndResetPerfStats();
         const auto title =

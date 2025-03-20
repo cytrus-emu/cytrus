@@ -293,7 +293,7 @@ elseif(WIN32)
 endif()
 
 if(ENABLE_SDL2)
-    target_link_libraries(cytrus-qt PRIVATE SDL2::SDL2)
+    target_link_libraries(cytrus-qt PRIVATE SDL3::SDL3)
     target_compile_definitions(cytrus-qt PRIVATE HAVE_SDL2)
 endif()
 
