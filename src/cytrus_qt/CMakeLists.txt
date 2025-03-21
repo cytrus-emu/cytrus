@@ -253,9 +253,13 @@ if (APPLE)
     set(DIST_DIR "../../dist/apple")
     set(APPLE_RESOURCES
         "${DIST_DIR}/cytrus.icns"
-        "${DIST_DIR}/LaunchScreen.storyboard"
         "${DIST_DIR}/launch_logo.png"
     )
+
+    if(IOS)
+        list(APPEND APPLE_RESOURCES "${DIST_DIR}/LaunchScreen.storyboard")
+    endif()
+
     target_sources(cytrus-qt PRIVATE ${APPLE_RESOURCES})
 
     # Define app bundle metadata.

@@ -42,15 +42,10 @@ SDL3Sink::SDL3Sink(std::string device_name) : impl(std::make_unique<Impl>()) {
     SDL_AudioSpec obtained_audiospec;
     SDL_zero(obtained_audiospec);
 
-    const char* device = nullptr;
-    if (device_name != auto_device_name && !device_name.empty()) {
-        device = device_name.c_str();
-    }
-
     impl->stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &desired_audiospec,
                                              &Impl::Callback, impl.get());
     if (!impl->stream) {
-        LOG_CRITICAL(Audio_Sink, "SDL_OpenAUdioDeviceStream failed");
+        LOG_CRITICAL(Audio_Sink, "SDL_OpenAudioDeviceStream failed");
         return;
     }
 

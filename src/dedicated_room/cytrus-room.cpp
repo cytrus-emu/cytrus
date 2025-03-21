@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
                 port = static_cast<u16>(strtoul(optarg, &endarg, 0));
                 break;
             case 'm':
-                max_members = strtoul(optarg, &endarg, 0);
+                max_members = (u32)strtoul(optarg, &endarg, 0);
                 break;
             case 'w':
                 password.assign(optarg);
