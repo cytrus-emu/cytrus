@@ -401,6 +401,17 @@ if (USE_SYSTEM_BOOST)
     find_package(Boost 1.70.0 COMPONENTS container locale serialization iostreams REQUIRED)
 endif()
 
+if (UNIX AND NOT APPLE)
+execute_process(
+    "loginctl show-session $(loginctl | grep $(whoami) | awk '{print $1}') -p Type"
+    OUTPUT_VARIABLE result_display_server)
+if ("${resulting_display_server}" EQUALS "Type=x11")
+   add_compile_definitions(-DDISPLAY_X11)
+else()
+   add_compile_definitions(-DDISPLAY_WAYLAND)
+endif()
+endif()
+
 enable_testing()
 add_subdirectory(externals)
 

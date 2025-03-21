@@ -12,11 +12,14 @@
 #include "core/frontend/emu_window.h"
 #include "cytrus/emu_window/emu_window_sdl3_vk.h"
 
-// TODO: add the includes for X11, Wayland and Android
 #if defined(SDL_PLATFORM_WIN32)
 #include <Windows.h>
-#elif defined(SDL_PLATFORM_LINUX)
-#include <X11/Xlib.h> // TODO: add check for X11 or Wayland
+#elif defined(SDL_PLATFORM_LINUX) // TODO: check if this is correct
+#if defined(DISPLAY_X11)
+#include <X11/Xlib.h>
+#else
+#include <wayland-client.h>
+#endif
 #elif defined(SDL_PLATFORM_ANDROID)
 #include <EGL/egl.h>
 #endif
