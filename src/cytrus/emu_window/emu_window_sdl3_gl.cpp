@@ -11,7 +11,7 @@
 #include "common/scm_rev.h"
 #include "common/settings.h"
 #include "core/core.h"
-#include "cytrus/emu_window/emu_window_sdl2_gl.h"
+#include "cytrus/emu_window/emu_window_sdl3_gl.h"
 #include "video_core/gpu.h"
 #include "video_core/renderer_base.h"
 
@@ -58,8 +58,8 @@ static SDL_Window* CreateGLWindow(const std::string& window_title, bool gles) {
                                 SDL_WINDOW_HIGH_PIXEL_DENSITY);
 }
 
-EmuWindow_SDL2_GL::EmuWindow_SDL2_GL(Core::System& system_, bool fullscreen, bool is_secondary)
-    : EmuWindow_SDL2{system_, is_secondary} {
+EmuWindow_SDL3_GL::EmuWindow_SDL3_GL(Core::System& system_, bool fullscreen, bool is_secondary)
+    : EmuWindow_SDL3{system_, is_secondary} {
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
     SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
@@ -83,7 +83,7 @@ EmuWindow_SDL2_GL::EmuWindow_SDL2_GL(Core::System& system_, bool fullscreen, boo
         // On failure, fall back to context with flipped type.
         render_window = CreateGLWindow(window_title, !Settings::values.use_gles.GetValue());
         if (render_window == nullptr) {
-            LOG_CRITICAL(Frontend, "Failed to create SDL2 window: {}", SDL_GetError());
+            LOG_CRITICAL(Frontend, "Failed to create SDL3 window: {}", SDL_GetError());
             exit(1);
         }
     }
@@ -101,11 +101,11 @@ EmuWindow_SDL2_GL::EmuWindow_SDL2_GL(Core::System& system_, bool fullscreen, boo
     last_saved_context = nullptr;
 
     if (window_context == nullptr) {
-        LOG_CRITICAL(Frontend, "Failed to create SDL2 GL context: {}", SDL_GetError());
+        LOG_CRITICAL(Frontend, "Failed to create SDL3 GL context: {}", SDL_GetError());
         exit(1);
     }
     if (core_context == nullptr) {
-        LOG_CRITICAL(Frontend, "Failed to create shared SDL2 GL context: {}", SDL_GetError());
+        LOG_CRITICAL(Frontend, "Failed to create shared SDL3 GL context: {}", SDL_GetError());
         exit(1);
     }
 
@@ -126,33 +126,33 @@ EmuWindow_SDL2_GL::EmuWindow_SDL2_GL(Core::System& system_, bool fullscreen, boo
     SDL_PumpEvents();
 }
 
-EmuWindow_SDL2_GL::~EmuWindow_SDL2_GL() {
+EmuWindow_SDL3_GL::~EmuWindow_SDL3_GL() {
     core_context.reset();
     SDL_DestroyWindow(render_window);
     SDL_GL_DestroyContext((SDL_GLContextState*)window_context);
 }
 
-std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL2_GL::CreateSharedContext() const {
+std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL3_GL::CreateSharedContext() const {
     return std::make_unique<SDLGLContext>();
 }
 
-void EmuWindow_SDL2_GL::MakeCurrent() {
+void EmuWindow_SDL3_GL::MakeCurrent() {
     core_context->MakeCurrent();
 }
 
-void EmuWindow_SDL2_GL::DoneCurrent() {
+void EmuWindow_SDL3_GL::DoneCurrent() {
     core_context->DoneCurrent();
 }
 
-void EmuWindow_SDL2_GL::SaveContext() {
+void EmuWindow_SDL3_GL::SaveContext() {
     last_saved_context = SDL_GL_GetCurrentContext();
 }
 
-void EmuWindow_SDL2_GL::RestoreContext() {
+void EmuWindow_SDL3_GL::RestoreContext() {
     SDL_GL_MakeCurrent(render_window, (SDL_GLContextState*)last_saved_context);
 }
 
-void EmuWindow_SDL2_GL::Present() {
+void EmuWindow_SDL3_GL::Present() {
     SDL_GL_MakeCurrent(render_window, (SDL_GLContextState*)window_context);
     SDL_GL_SetSwapInterval(1);
     while (IsOpen()) {

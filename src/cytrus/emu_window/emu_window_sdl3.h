@@ -15,13 +15,13 @@ namespace Core {
 class System;
 }
 
-class EmuWindow_SDL2 : public Frontend::EmuWindow {
+class EmuWindow_SDL3 : public Frontend::EmuWindow {
 public:
-    explicit EmuWindow_SDL2(Core::System& system_, bool is_secondary);
-    ~EmuWindow_SDL2();
+    explicit EmuWindow_SDL3(Core::System& system_, bool is_secondary);
+    ~EmuWindow_SDL3();
 
-    /// Initializes SDL2
-    static void InitializeSDL2();
+    /// Initializes SDL3
+    static void InitializeSDL3();
 
     /// Presents the most recent frame from the video backend
     virtual void Present() {}
@@ -75,10 +75,10 @@ protected:
     /// Is the window still open?
     bool is_open = true;
 
-    /// Internal SDL2 render window
+    /// Internal SDL3 render window
     SDL_Window* render_window;
 
-    /// Internal SDL2 window ID
+    /// Internal SDL3 window ID
     u32 render_window_id{};
 
     /// Fake hidden window for the core context

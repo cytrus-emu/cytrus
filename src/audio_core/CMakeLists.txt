@@ -36,7 +36,7 @@ add_library(audio_core STATIC
     time_stretch.cpp
     time_stretch.h
 
-    $<$<BOOL:${ENABLE_SDL2}>:sdl2_sink.cpp sdl2_sink.h>
+    $<$<BOOL:${ENABLE_SDL3}>:sdl3_sink.cpp sdl3_sink.h>
     $<$<BOOL:${ENABLE_CUBEB}>:cubeb_sink.cpp cubeb_sink.h cubeb_input.cpp cubeb_input.h>
     $<$<BOOL:${ENABLE_OPENAL}>:openal_input.cpp openal_input.h openal_sink.cpp openal_sink.h>
 )
@@ -46,9 +46,9 @@ create_target_directory_groups(audio_core)
 target_link_libraries(audio_core PUBLIC cytrus_common cytrus_core)
 target_link_libraries(audio_core PRIVATE faad2 SoundTouch teakra)
 
-if(ENABLE_SDL2)
+if(ENABLE_SDL3)
     target_link_libraries(audio_core PRIVATE SDL3::SDL3)
-    target_compile_definitions(audio_core PRIVATE HAVE_SDL2)
+    target_compile_definitions(audio_core PRIVATE HAVE_SDL3)
 endif()
 
 if(ENABLE_CUBEB)

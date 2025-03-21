@@ -10,7 +10,7 @@
 #include "common/logging/log.h"
 #include "common/scm_rev.h"
 #include "core/frontend/emu_window.h"
-#include "cytrus/emu_window/emu_window_sdl2_vk.h"
+#include "cytrus/emu_window/emu_window_sdl3_vk.h"
 
 #if defined(SDL_PLATFORM_WIN32)
 #include <Windows.h>
@@ -18,8 +18,8 @@
 
 class DummyContext : public Frontend::GraphicsContext {};
 
-EmuWindow_SDL2_VK::EmuWindow_SDL2_VK(Core::System& system, bool fullscreen, bool is_secondary)
-    : EmuWindow_SDL2{system, is_secondary} {
+EmuWindow_SDL3_VK::EmuWindow_SDL3_VK(Core::System& system, bool fullscreen, bool is_secondary)
+    : EmuWindow_SDL3{system, is_secondary} {
     const std::string window_title = fmt::format("Cytrus {} | {}-{}", Common::g_build_fullname,
                                                  Common::g_scm_branch, Common::g_scm_desc);
     render_window =
@@ -91,8 +91,8 @@ EmuWindow_SDL2_VK::EmuWindow_SDL2_VK(Core::System& system, bool fullscreen, bool
     SDL_PumpEvents();
 }
 
-EmuWindow_SDL2_VK::~EmuWindow_SDL2_VK() = default;
+EmuWindow_SDL3_VK::~EmuWindow_SDL3_VK() = default;
 
-std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL2_VK::CreateSharedContext() const {
+std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL3_VK::CreateSharedContext() const {
     return std::make_unique<DummyContext>();
 }

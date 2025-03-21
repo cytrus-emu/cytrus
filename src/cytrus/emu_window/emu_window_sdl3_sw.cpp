@@ -12,21 +12,21 @@
 #include "common/settings.h"
 #include "core/core.h"
 #include "core/frontend/emu_window.h"
-#include "cytrus/emu_window/emu_window_sdl2_sw.h"
+#include "cytrus/emu_window/emu_window_sdl3_sw.h"
 #include "video_core/gpu.h"
 #include "video_core/renderer_software/renderer_software.h"
 
 class DummyContext : public Frontend::GraphicsContext {};
 
-EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, bool is_secondary)
-    : EmuWindow_SDL2{system_, is_secondary}, system{system_} {
+EmuWindow_SDL3_SW::EmuWindow_SDL3_SW(Core::System& system_, bool fullscreen, bool is_secondary)
+    : EmuWindow_SDL3{system_, is_secondary}, system{system_} {
     std::string window_title = fmt::format("Cytrus {} | {}-{}", Common::g_build_fullname,
                                            Common::g_scm_branch, Common::g_scm_desc);
     render_window = SDL_CreateWindow(window_title.c_str(), Core::kScreenTopWidth,
                                      Core::kScreenTopHeight + Core::kScreenBottomHeight, 0);
 
     if (render_window == nullptr) {
-        LOG_CRITICAL(Frontend, "Failed to create SDL2 window: {}", SDL_GetError());
+        LOG_CRITICAL(Frontend, "Failed to create SDL3 window: {}", SDL_GetError());
         exit(1);
     }
 
@@ -34,7 +34,7 @@ EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, boo
     renderer = SDL_CreateSoftwareRenderer(window_surface);
 
     if (renderer == nullptr) {
-        LOG_CRITICAL(Frontend, "Failed to create SDL2 software renderer: {}", SDL_GetError());
+        LOG_CRITICAL(Frontend, "Failed to create SDL3 software renderer: {}", SDL_GetError());
         exit(1);
     }
 
@@ -49,16 +49,16 @@ EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, boo
     SDL_PumpEvents();
 }
 
-EmuWindow_SDL2_SW::~EmuWindow_SDL2_SW() {
+EmuWindow_SDL3_SW::~EmuWindow_SDL3_SW() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(render_window);
 }
 
-std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL2_SW::CreateSharedContext() const {
+std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL3_SW::CreateSharedContext() const {
     return std::make_unique<DummyContext>();
 }
 
-void EmuWindow_SDL2_SW::Present() {
+void EmuWindow_SDL3_SW::Present() {
     const auto layout{Layout::DefaultFrameLayout(
         Core::kScreenTopWidth, Core::kScreenTopHeight + Core::kScreenBottomHeight, false, false)};
 
@@ -90,7 +90,7 @@ void EmuWindow_SDL2_SW::Present() {
     }
 }
 
-SDL_Surface* EmuWindow_SDL2_SW::LoadFramebuffer(VideoCore::ScreenId screen_id) {
+SDL_Surface* EmuWindow_SDL3_SW::LoadFramebuffer(VideoCore::ScreenId screen_id) {
     const auto& renderer = static_cast<SwRenderer::RendererSoftware&>(system.GPU().Renderer());
     const auto& info = renderer.Screen(screen_id);
     const int width = static_cast<int>(info.width);

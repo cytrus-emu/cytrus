@@ -12,15 +12,15 @@
 #include "common/microprofile.h"
 
 #include "cytrus/config.h"
-#include "cytrus/emu_window/emu_window_sdl2.h"
+#include "cytrus/emu_window/emu_window_sdl3.h"
 #ifdef ENABLE_OPENGL
-#include "cytrus/emu_window/emu_window_sdl2_gl.h"
+#include "cytrus/emu_window/emu_window_sdl3_gl.h"
 #endif
 #ifdef ENABLE_SOFTWARE_RENDERER
-#include "cytrus/emu_window/emu_window_sdl2_sw.h"
+#include "cytrus/emu_window/emu_window_sdl3_sw.h"
 #endif
 #ifdef ENABLE_VULKAN
-#include "cytrus/emu_window/emu_window_sdl2_vk.h"
+#include "cytrus/emu_window/emu_window_sdl3_vk.h"
 #endif
 #include "common/common_paths.h"
 #include "common/detached_tasks.h"
@@ -356,23 +356,23 @@ int main(int argc, char** argv) {
     // Register frontend applets
     Frontend::RegisterDefaultApplets(system);
 
-    EmuWindow_SDL2::InitializeSDL2();
+    EmuWindow_SDL3::InitializeSDL3();
 
     const auto create_emu_window = [&](bool fullscreen,
-                                       bool is_secondary) -> std::unique_ptr<EmuWindow_SDL2> {
+                                       bool is_secondary) -> std::unique_ptr<EmuWindow_SDL3> {
         const auto graphics_api = Settings::values.graphics_api.GetValue();
         switch (graphics_api) {
 #ifdef ENABLE_OPENGL
         case Settings::GraphicsAPI::OpenGL:
-            return std::make_unique<EmuWindow_SDL2_GL>(system, fullscreen, is_secondary);
+            return std::make_unique<EmuWindow_SDL3_GL>(system, fullscreen, is_secondary);
 #endif
 #ifdef ENABLE_VULKAN
         case Settings::GraphicsAPI::Vulkan:
-            return std::make_unique<EmuWindow_SDL2_VK>(system, fullscreen, is_secondary);
+            return std::make_unique<EmuWindow_SDL3_VK>(system, fullscreen, is_secondary);
 #endif
 #ifdef ENABLE_SOFTWARE_RENDERER
         case Settings::GraphicsAPI::Software:
-            return std::make_unique<EmuWindow_SDL2_SW>(system, fullscreen, is_secondary);
+            return std::make_unique<EmuWindow_SDL3_SW>(system, fullscreen, is_secondary);
 #endif
         default:
             LOG_CRITICAL(
@@ -380,11 +380,11 @@ int main(int argc, char** argv) {
                 "Unknown or unsupported graphics API {}, falling back to available default",
                 graphics_api);
 #ifdef ENABLE_OPENGL
-            return std::make_unique<EmuWindow_SDL2_GL>(system, fullscreen, is_secondary);
+            return std::make_unique<EmuWindow_SDL3_GL>(system, fullscreen, is_secondary);
 #elif ENABLE_VULKAN
-            return std::make_unique<EmuWindow_SDL2_VK>(system, fullscreen, is_secondary);
+            return std::make_unique<EmuWindow_SDL3_VK>(system, fullscreen, is_secondary);
 #elif ENABLE_SOFTWARE_RENDERER
-            return std::make_unique<EmuWindow_SDL2_SW>(system, fullscreen, is_secondary);
+            return std::make_unique<EmuWindow_SDL3_SW>(system, fullscreen, is_secondary);
 #else
 // TODO: Add a null renderer backend for this, perhaps.
 #error "At least one renderer must be enabled."

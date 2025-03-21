@@ -59,9 +59,9 @@ else()
     set(DEFAULT_ENABLE_LTO OFF)
 endif()
 
-option(ENABLE_SDL2 "Enable using SDL2" ON)
-CMAKE_DEPENDENT_OPTION(ENABLE_SDL2_FRONTEND "Enable the SDL2 frontend" OFF "ENABLE_SDL2;NOT ANDROID AND NOT IOS" OFF)
-option(USE_SYSTEM_SDL2 "Use the system SDL2 lib (instead of the bundled one)" OFF)
+option(ENABLE_SDL3 "Enable using SDL3" ON)
+CMAKE_DEPENDENT_OPTION(ENABLE_SDL3_FRONTEND "Enable the SDL3 frontend" ON "ENABLE_SDL3;NOT ANDROID AND NOT IOS" OFF)
+option(USE_SYSTEM_SDL3 "Use the system SDL3 lib (instead of the bundled one)" OFF)
 
 # Set bundled qt as dependent options.
 option(ENABLE_QT "Enable the Qt frontend" ON)
@@ -412,8 +412,8 @@ if (NOT USE_SYSTEM_BOOST)
     add_library(Boost::iostreams ALIAS boost_iostreams)
 endif()
 
-# SDL2
-if (ENABLE_SDL2 AND USE_SYSTEM_SDL2)
+# SDL3
+if (ENABLE_SDL3 AND USE_SYSTEM_SDL3)
     find_package(SDL3 REQUIRED)
     add_library(SDL3 INTERFACE)
     target_link_libraries(SDL3 INTERFACE "${SDL3_LIBRARY}")
@@ -449,7 +449,7 @@ endif()
 # Not supported for mobile platforms as distributables are built differently.
 if (NOT ANDROID AND NOT IOS)
     include(BundleTarget)
-    if (ENABLE_SDL2_FRONTEND)
+    if (ENABLE_SDL3_FRONTEND)
         bundle_target(cytrus)
     endif()
     if (ENABLE_QT)
@@ -477,7 +477,7 @@ if(ENABLE_QT AND UNIX AND NOT APPLE)
 endif()
 
 if(UNIX)
-    if(ENABLE_SDL2)
+    if(ENABLE_SDL3)
         install(FILES "${PROJECT_SOURCE_DIR}/dist/cytrus.6"
                 DESTINATION "${CMAKE_INSTALL_PREFIX}/share/man/man6")
     endif()
