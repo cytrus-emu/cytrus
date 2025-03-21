@@ -12,8 +12,13 @@
 #include "core/frontend/emu_window.h"
 #include "cytrus/emu_window/emu_window_sdl3_vk.h"
 
+// TODO: add the includes for X11, Wayland and Android
 #if defined(SDL_PLATFORM_WIN32)
 #include <Windows.h>
+#elif defined(SDL_PLATFORM_LINUX)
+#include <X11/Xlib.h> // TODO: add check for X11 or Wayland
+#elif defined(SDL_PLATFORM_ANDROID)
+#include <EGL/egl.h>
 #endif
 
 class DummyContext : public Frontend::GraphicsContext {};
@@ -26,12 +31,6 @@ EmuWindow_SDL3_VK::EmuWindow_SDL3_VK(Core::System& system, bool fullscreen, bool
         SDL_CreateWindow(window_title.c_str(), Core::kScreenTopWidth,
                          Core::kScreenTopHeight + Core::kScreenBottomHeight,
                          SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY);
-    // SDL_SysWMinfo wm;
-    // SDL_VERSION(&wm.version);
-    // if (SDL_GetWindowWMInfo(render_window, &wm) == SDL_FALSE) {
-    //     LOG_CRITICAL(Frontend, "Failed to get information from the window manager");
-    //     std::exit(EXIT_FAILURE);
-    // }
 
     if (fullscreen) {
         Fullscreen();
@@ -43,46 +42,37 @@ EmuWindow_SDL3_VK::EmuWindow_SDL3_VK(Core::System& system, bool fullscreen, bool
                                              SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
     window_info.type = Frontend::WindowSystemType::Windows;
     window_info.render_surface = reinterpret_cast<void*>(hwnd);
+#elif defined(SDL_PLATFORM_LINUX)
+    if (SDL_strcmp(SDL_GetCurrentVideoDriver(), "x11") == 0) {
+        Display* xdisplay = (Display*)SDL_GetPointerProperty(
+            SDL_GetWindowProperties(window), SDL_PROP_WINDOW_X11_DISPLAY_POINTER, NULL);
+        Window xwindow = (Window)SDL_GetNumberProperty(SDL_GetWindowProperties(window),
+                                                       SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0);
+        window_info.type = Frontend::WindowSystemType::X11;
+        window_info.display_connection = xdisplay;
+        window_info.render_surface = reinterpret_cast<void*>(xwindow);
+    } else if (SDL_strcmp(SDL_GetCurrentVideoDriver(), "wayland") == 0) {
+        struct wl_display* display = (struct wl_display*)SDL_GetPointerProperty(
+            SDL_GetWindowProperties(window), SDL_PROP_WINDOW_WAYLAND_DISPLAY_POINTER, NULL);
+        struct wl_surface* surface = (struct wl_surface*)SDL_GetPointerProperty(
+            SDL_GetWindowProperties(window), SDL_PROP_WINDOW_WAYLAND_SURFACE_POINTER, NULL);
+        window_info.type = Frontend::WindowSystemType::Wayland;
+        window_info.display_connection = display;
+        window_info.render_surface = reinterpret_cast<void*>(surface);
+    }
+#elif defined(SDL_PLATFORM_MACOS)
+    window_info.type = Frontend::WindowSystemType::MacOS;
+    window_info.render_surface = SDL_Metal_GetLayer(SDL_Metal_CreateView(render_window));
+#elif defined(SDL_PLATFORM_ANDROID)
+    EGLSurface surface = (EGLSurface)SDL_GetPointerProperty(
+        SDL_GetWindowProperties(render_window), SDL_PROP_WINDOW_ANDROID_SURFACE_POINTER, NULL);
+    window_info.type = Frontend::WindowSystemType::Android;
+    window_info.render_surface = reinterpret_cast<void*>(surface);
 #else
     LOG_CRITICAL(Frontend, "Window manager subsystem {} not implemented", wm.subsystem);
     std::exit(EXIT_FAILURE);
     break;
 #endif
-
-    /*
-        switch (wm.subsystem) {
-    #ifdef SDL_VIDEO_DRIVER_X11
-        case SDL_SYSWM_TYPE::SDL_SYSWM_X11:
-            window_info.type = Frontend::WindowSystemType::X11;
-            window_info.display_connection = wm.info.x11.display;
-            window_info.render_surface = reinterpret_cast<void*>(wm.info.x11.window);
-            break;
-    #endif
-    #ifdef SDL_VIDEO_DRIVER_WAYLAND
-        case SDL_SYSWM_TYPE::SDL_SYSWM_WAYLAND:
-            window_info.type = Frontend::WindowSystemType::Wayland;
-            window_info.display_connection = wm.info.wl.display;
-            window_info.render_surface = wm.info.wl.surface;
-            break;
-    #endif
-    #ifdef SDL_VIDEO_DRIVER_COCOA
-        case SDL_SYSWM_TYPE::SDL_SYSWM_COCOA:
-            window_info.type = Frontend::WindowSystemType::MacOS;
-            window_info.render_surface = SDL_Metal_GetLayer(SDL_Metal_CreateView(render_window));
-            break;
-    #endif
-    #ifdef SDL_VIDEO_DRIVER_ANDROID
-        case SDL_SYSWM_TYPE::SDL_SYSWM_ANDROID:
-            window_info.type = Frontend::WindowSystemType::Android;
-            window_info.render_surface = reinterpret_cast<void*>(wm.info.android.window);
-            break;
-    #endif
-        default:
-            LOG_CRITICAL(Frontend, "Window manager subsystem {} not implemented", wm.subsystem);
-            std::exit(EXIT_FAILURE);
-            break;
-        }
-            */
 
     render_window_id = SDL_GetWindowID(render_window);
 
