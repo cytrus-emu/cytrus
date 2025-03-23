@@ -5,7 +5,7 @@
 #pragma once
 
 #include <memory>
-#include "cytrus/emu_window/emu_window_sdl2.h"
+#include "cytrus/emu_window/emu_window_sdl3.h"
 
 namespace Frontend {
 class GraphicsContext;
@@ -15,10 +15,10 @@ namespace Core {
 class System;
 }
 
-class EmuWindow_SDL2_VK final : public EmuWindow_SDL2 {
+class EmuWindow_SDL3_VK final : public EmuWindow_SDL3 {
 public:
-    explicit EmuWindow_SDL2_VK(Core::System& system_, bool fullscreen, bool is_secondary);
-    ~EmuWindow_SDL2_VK() override;
+    explicit EmuWindow_SDL3_VK(Core::System& system_, bool fullscreen, bool is_secondary);
+    ~EmuWindow_SDL3_VK() override;
 
     std::unique_ptr<Frontend::GraphicsContext> CreateSharedContext() const override;
 };

@@ -3,14 +3,14 @@
 // Refer to the license.txt file included.
 
 #include "input_common/sdl/sdl.h"
-#ifdef HAVE_SDL2
+#ifdef HAVE_SDL3
 #include "input_common/sdl/sdl_impl.h"
 #endif
 
 namespace InputCommon::SDL {
 
 std::unique_ptr<State> Init() {
-#ifdef HAVE_SDL2
+#ifdef HAVE_SDL3
     return std::make_unique<SDLState>();
 #else
     return std::make_unique<NullState>();

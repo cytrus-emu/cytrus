@@ -6,28 +6,28 @@ add_executable(cytrus
     config.cpp
     config.h
     default_ini.h
-    emu_window/emu_window_sdl2.cpp
-    emu_window/emu_window_sdl2.h
+    emu_window/emu_window_sdl3.cpp
+    emu_window/emu_window_sdl3.h
     precompiled_headers.h
     resource.h
 )
 
 if (ENABLE_SOFTWARE_RENDERER)
     target_sources(cytrus PRIVATE
-        emu_window/emu_window_sdl2_sw.cpp
-        emu_window/emu_window_sdl2_sw.h
+        emu_window/emu_window_sdl3_sw.cpp
+        emu_window/emu_window_sdl3_sw.h
     )
 endif()
 if (ENABLE_OPENGL)
     target_sources(cytrus PRIVATE
-        emu_window/emu_window_sdl2_gl.cpp
-        emu_window/emu_window_sdl2_gl.h
+        emu_window/emu_window_sdl3_gl.cpp
+        emu_window/emu_window_sdl3_gl.h
     )
 endif()
 if (ENABLE_VULKAN)
     target_sources(cytrus PRIVATE
-        emu_window/emu_window_sdl2_vk.cpp
-        emu_window/emu_window_sdl2_vk.h
+        emu_window/emu_window_sdl3_vk.cpp
+        emu_window/emu_window_sdl3_vk.h
     )
 endif()
 
@@ -38,7 +38,7 @@ target_link_libraries(cytrus PRIVATE inih)
 if (MSVC)
     target_link_libraries(cytrus PRIVATE getopt)
 endif()
-target_link_libraries(cytrus PRIVATE ${PLATFORM_LIBRARIES} SDL2::SDL2 Threads::Threads)
+target_link_libraries(cytrus PRIVATE ${PLATFORM_LIBRARIES} SDL3::SDL3 Threads::Threads)
 
 if (ENABLE_OPENGL)
     target_link_libraries(cytrus PRIVATE glad)

@@ -142,7 +142,7 @@ namespace Polling {
 std::vector<std::unique_ptr<DevicePoller>> GetPollers(DeviceType type) {
     std::vector<std::unique_ptr<DevicePoller>> pollers;
 
-#ifdef HAVE_SDL2
+#ifdef HAVE_SDL3
     pollers = sdl->GetPollers(type);
 #endif
 #ifdef ENABLE_GCADAPTER

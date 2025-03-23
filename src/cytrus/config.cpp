@@ -7,7 +7,7 @@
 #include <sstream>
 #include <type_traits>
 #include <INIReader.h>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "common/file_util.h"
 #include "common/logging/backend.h"
 #include "common/logging/log.h"
@@ -21,8 +21,8 @@
 
 Config::Config() {
     // TODO: Don't hardcode the path; let the frontend decide where to put the config files.
-    sdl2_config_loc = FileUtil::GetUserPath(FileUtil::UserPath::ConfigDir) + "sdl2-config.ini";
-    sdl2_config = std::make_unique<INIReader>(sdl2_config_loc);
+    sdl3_config_loc = FileUtil::GetUserPath(FileUtil::UserPath::ConfigDir) + "sdl3-config.ini";
+    sdl3_config = std::make_unique<INIReader>(sdl3_config_loc);
 
     Reload();
 }
@@ -30,13 +30,13 @@ Config::Config() {
 Config::~Config() = default;
 
 bool Config::LoadINI(const std::string& default_contents, bool retry) {
-    const std::string& location = this->sdl2_config_loc;
-    if (sdl2_config->ParseError() < 0) {
+    const std::string& location = this->sdl3_config_loc;
+    if (sdl3_config->ParseError() < 0) {
         if (retry) {
             LOG_WARNING(Config, "Failed to load {}. Creating file from defaults...", location);
             FileUtil::CreateFullPath(location);
             FileUtil::WriteStringToFile(true, location, default_contents);
-            sdl2_config = std::make_unique<INIReader>(location); // Reopen file
+            sdl3_config = std::make_unique<INIReader>(location); // Reopen file
 
             return LoadINI(default_contents, false);
         }
@@ -72,7 +72,7 @@ static const std::array<std::array<int, 5>, Settings::NativeAnalog::NumAnalogs> 
 
 template <>
 void Config::ReadSetting(const std::string& group, Settings::Setting<std::string>& setting) {
-    std::string setting_value = sdl2_config->Get(group, setting.GetLabel(), setting.GetDefault());
+    std::string setting_value = sdl3_config->Get(group, setting.GetLabel(), setting.GetDefault());
     if (setting_value.empty()) {
         setting_value = setting.GetDefault();
     }
@@ -81,16 +81,16 @@ void Config::ReadSetting(const std::string& group, Settings::Setting<std::string
 
 template <>
 void Config::ReadSetting(const std::string& group, Settings::Setting<bool>& setting) {
-    setting = sdl2_config->GetBoolean(group, setting.GetLabel(), setting.GetDefault());
+    setting = sdl3_config->GetBoolean(group, setting.GetLabel(), setting.GetDefault());
 }
 
 template <typename Type, bool ranged>
 void Config::ReadSetting(const std::string& group, Settings::Setting<Type, ranged>& setting) {
     if constexpr (std::is_floating_point_v<Type>) {
         setting = static_cast<Type>(
-            sdl2_config->GetReal(group, setting.GetLabel(), setting.GetDefault()));
+            sdl3_config->GetReal(group, setting.GetLabel(), setting.GetDefault()));
     } else {
-        setting = static_cast<Type>(sdl2_config->GetInteger(
+        setting = static_cast<Type>(sdl3_config->GetInteger(
             group, setting.GetLabel(), static_cast<long>(setting.GetDefault())));
     }
 }
@@ -101,7 +101,7 @@ void Config::ReadValues() {
     for (int i = 0; i < Settings::NativeButton::NumButtons; ++i) {
         std::string default_param = InputCommon::GenerateKeyboardParam(default_buttons[i]);
         Settings::values.current_input_profile.buttons[i] =
-            sdl2_config->GetString("Controls", Settings::NativeButton::mapping[i], default_param);
+            sdl3_config->GetString("Controls", Settings::NativeButton::mapping[i], default_param);
         if (Settings::values.current_input_profile.buttons[i].empty())
             Settings::values.current_input_profile.buttons[i] = default_param;
     }
@@ -111,20 +111,20 @@ void Config::ReadValues() {
             default_analogs[i][0], default_analogs[i][1], default_analogs[i][2],
             default_analogs[i][3], default_analogs[i][4], 0.5f);
         Settings::values.current_input_profile.analogs[i] =
-            sdl2_config->GetString("Controls", Settings::NativeAnalog::mapping[i], default_param);
+            sdl3_config->GetString("Controls", Settings::NativeAnalog::mapping[i], default_param);
         if (Settings::values.current_input_profile.analogs[i].empty())
             Settings::values.current_input_profile.analogs[i] = default_param;
     }
 
-    Settings::values.current_input_profile.motion_device = sdl2_config->GetString(
+    Settings::values.current_input_profile.motion_device = sdl3_config->GetString(
         "Controls", "motion_device",
         "engine:motion_emu,update_period:100,sensitivity:0.01,tilt_clamp:90.0");
     Settings::values.current_input_profile.touch_device =
-        sdl2_config->GetString("Controls", "touch_device", "engine:emu_window");
-    Settings::values.current_input_profile.udp_input_address = sdl2_config->GetString(
+        sdl3_config->GetString("Controls", "touch_device", "engine:emu_window");
+    Settings::values.current_input_profile.udp_input_address = sdl3_config->GetString(
         "Controls", "udp_input_address", InputCommon::CemuhookUDP::DEFAULT_ADDR);
     Settings::values.current_input_profile.udp_input_port =
-        static_cast<u16>(sdl2_config->GetInteger("Controls", "udp_input_port",
+        static_cast<u16>(sdl3_config->GetInteger("Controls", "udp_input_port",
                                                  InputCommon::CemuhookUDP::DEFAULT_PORT));
 
     // Core
@@ -196,9 +196,9 @@ void Config::ReadValues() {
 
     if (Settings::values.use_custom_storage) {
         FileUtil::UpdateUserPath(FileUtil::UserPath::NANDDir,
-                                 sdl2_config->GetString("Data Storage", "nand_directory", ""));
+                                 sdl3_config->GetString("Data Storage", "nand_directory", ""));
         FileUtil::UpdateUserPath(FileUtil::UserPath::SDMCDir,
-                                 sdl2_config->GetString("Data Storage", "sdmc_directory", ""));
+                                 sdl3_config->GetString("Data Storage", "sdmc_directory", ""));
     }
 
     // System
@@ -216,7 +216,7 @@ void Config::ReadValues() {
         t.tm_year = 100;
         t.tm_isdst = 0;
         std::istringstream string_stream(
-            sdl2_config->GetString("System", "init_time", "2000-01-01 00:00:01"));
+            sdl3_config->GetString("System", "init_time", "2000-01-01 00:00:01"));
         string_stream >> std::get_time(&t, "%Y-%m-%d %H:%M:%S");
         if (string_stream.fail()) {
             LOG_ERROR(Config, "Failed To parse init_time. Using 2000-01-01 00:00:01");
@@ -235,7 +235,7 @@ void Config::ReadValues() {
         constexpr const char* default_init_time_offset = "0 00:00:00";
 
         std::string offset_string =
-            sdl2_config->GetString("System", "init_time_offset", default_init_time_offset);
+            sdl3_config->GetString("System", "init_time_offset", default_init_time_offset);
 
         std::size_t sep_index = offset_string.find(' ');
 
@@ -286,23 +286,23 @@ void Config::ReadValues() {
     // Camera
     using namespace Service::CAM;
     Settings::values.camera_name[OuterRightCamera] =
-        sdl2_config->GetString("Camera", "camera_outer_right_name", "blank");
+        sdl3_config->GetString("Camera", "camera_outer_right_name", "blank");
     Settings::values.camera_config[OuterRightCamera] =
-        sdl2_config->GetString("Camera", "camera_outer_right_config", "");
+        sdl3_config->GetString("Camera", "camera_outer_right_config", "");
     Settings::values.camera_flip[OuterRightCamera] =
-        sdl2_config->GetInteger("Camera", "camera_outer_right_flip", 0);
+        sdl3_config->GetInteger("Camera", "camera_outer_right_flip", 0);
     Settings::values.camera_name[InnerCamera] =
-        sdl2_config->GetString("Camera", "camera_inner_name", "blank");
+        sdl3_config->GetString("Camera", "camera_inner_name", "blank");
     Settings::values.camera_config[InnerCamera] =
-        sdl2_config->GetString("Camera", "camera_inner_config", "");
+        sdl3_config->GetString("Camera", "camera_inner_config", "");
     Settings::values.camera_flip[InnerCamera] =
-        sdl2_config->GetInteger("Camera", "camera_inner_flip", 0);
+        sdl3_config->GetInteger("Camera", "camera_inner_flip", 0);
     Settings::values.camera_name[OuterLeftCamera] =
-        sdl2_config->GetString("Camera", "camera_outer_left_name", "blank");
+        sdl3_config->GetString("Camera", "camera_outer_left_name", "blank");
     Settings::values.camera_config[OuterLeftCamera] =
-        sdl2_config->GetString("Camera", "camera_outer_left_config", "");
+        sdl3_config->GetString("Camera", "camera_outer_left_config", "");
     Settings::values.camera_flip[OuterLeftCamera] =
-        sdl2_config->GetInteger("Camera", "camera_outer_left_flip", 0);
+        sdl3_config->GetInteger("Camera", "camera_outer_left_flip", 0);
 
     // Miscellaneous
     ReadSetting("Miscellaneous", Settings::values.log_filter);
@@ -315,32 +315,32 @@ void Config::ReadValues() {
 
     // Debugging
     Settings::values.record_frame_times =
-        sdl2_config->GetBoolean("Debugging", "record_frame_times", false);
+        sdl3_config->GetBoolean("Debugging", "record_frame_times", false);
     ReadSetting("Debugging", Settings::values.renderer_debug);
     ReadSetting("Debugging", Settings::values.use_gdbstub);
     ReadSetting("Debugging", Settings::values.gdbstub_port);
 
     for (const auto& service_module : Service::service_module_map) {
-        bool use_lle = sdl2_config->GetBoolean("Debugging", "LLE\\" + service_module.name, false);
+        bool use_lle = sdl3_config->GetBoolean("Debugging", "LLE\\" + service_module.name, false);
         Settings::values.lle_modules.emplace(service_module.name, use_lle);
     }
 
     // Web Service
     NetSettings::values.enable_telemetry =
-        sdl2_config->GetBoolean("WebService", "enable_telemetry", false);
+        sdl3_config->GetBoolean("WebService", "enable_telemetry", false);
     NetSettings::values.web_api_url =
-        sdl2_config->GetString("WebService", "web_api_url", "https://api.cytrus-emu.org");
+        sdl3_config->GetString("WebService", "web_api_url", "https://api.cytrus-emu.org");
     NetSettings::values.cytrus_username =
-        sdl2_config->GetString("WebService", "cytrus_username", "");
-    NetSettings::values.cytrus_token = sdl2_config->GetString("WebService", "cytrus_token", "");
+        sdl3_config->GetString("WebService", "cytrus_username", "");
+    NetSettings::values.cytrus_token = sdl3_config->GetString("WebService", "cytrus_token", "");
 
     // Video Dumping
     Settings::values.output_format =
-        sdl2_config->GetString("Video Dumping", "output_format", "webm");
-    Settings::values.format_options = sdl2_config->GetString("Video Dumping", "format_options", "");
+        sdl3_config->GetString("Video Dumping", "output_format", "webm");
+    Settings::values.format_options = sdl3_config->GetString("Video Dumping", "format_options", "");
 
     Settings::values.video_encoder =
-        sdl2_config->GetString("Video Dumping", "video_encoder", "libvpx-vp9");
+        sdl3_config->GetString("Video Dumping", "video_encoder", "libvpx-vp9");
 
     // Options for variable bit rate live streaming taken from here:
     // https://developers.google.com/media/vp9/live-encoding
@@ -350,19 +350,19 @@ void Config::ReadValues() {
             "quality:realtime,speed:6,tile-columns:4,frame-parallel:1,threads:8,row-mt:1";
     }
     Settings::values.video_encoder_options =
-        sdl2_config->GetString("Video Dumping", "video_encoder_options", default_video_options);
+        sdl3_config->GetString("Video Dumping", "video_encoder_options", default_video_options);
     Settings::values.video_bitrate =
-        sdl2_config->GetInteger("Video Dumping", "video_bitrate", 2500000);
+        sdl3_config->GetInteger("Video Dumping", "video_bitrate", 2500000);
 
     Settings::values.audio_encoder =
-        sdl2_config->GetString("Video Dumping", "audio_encoder", "libvorbis");
+        sdl3_config->GetString("Video Dumping", "audio_encoder", "libvorbis");
     Settings::values.audio_encoder_options =
-        sdl2_config->GetString("Video Dumping", "audio_encoder_options", "");
+        sdl3_config->GetString("Video Dumping", "audio_encoder_options", "");
     Settings::values.audio_bitrate =
-        sdl2_config->GetInteger("Video Dumping", "audio_bitrate", 64000);
+        sdl3_config->GetInteger("Video Dumping", "audio_bitrate", 64000);
 }
 
 void Config::Reload() {
-    LoadINI(DefaultINI::sdl2_config_file);
+    LoadINI(DefaultINI::sdl3_config_file);
     ReadValues();
 }

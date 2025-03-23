@@ -10,10 +10,10 @@
 
 namespace AudioCore {
 
-class SDL2Sink final : public Sink {
+class SDL3Sink final : public Sink {
 public:
-    explicit SDL2Sink(std::string device_id);
-    ~SDL2Sink() override;
+    explicit SDL3Sink(std::string device_id);
+    ~SDL3Sink() override;
 
     unsigned int GetNativeSampleRate() const override;
 
@@ -24,6 +24,6 @@ private:
     std::unique_ptr<Impl> impl;
 };
 
-std::vector<std::string> ListSDL2SinkDevices();
+std::vector<std::string> ListSDL3SinkDevices();
 
 } // namespace AudioCore

@@ -253,9 +253,13 @@ if (APPLE)
     set(DIST_DIR "../../dist/apple")
     set(APPLE_RESOURCES
         "${DIST_DIR}/cytrus.icns"
-        "${DIST_DIR}/LaunchScreen.storyboard"
         "${DIST_DIR}/launch_logo.png"
     )
+
+    if(IOS)
+        list(APPEND APPLE_RESOURCES "${DIST_DIR}/LaunchScreen.storyboard")
+    endif()
+
     target_sources(cytrus-qt PRIVATE ${APPLE_RESOURCES})
 
     # Define app bundle metadata.
@@ -292,9 +296,9 @@ elseif(WIN32)
     endif()
 endif()
 
-if(ENABLE_SDL2)
-    target_link_libraries(cytrus-qt PRIVATE SDL2::SDL2)
-    target_compile_definitions(cytrus-qt PRIVATE HAVE_SDL2)
+if(ENABLE_SDL3)
+    target_link_libraries(cytrus-qt PRIVATE SDL3::SDL3)
+    target_compile_definitions(cytrus-qt PRIVATE HAVE_SDL3)
 endif()
 
 create_target_directory_groups(cytrus-qt)

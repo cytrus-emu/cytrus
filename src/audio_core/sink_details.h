@@ -19,7 +19,7 @@ enum class SinkType : u32 {
     Null = 1,
     Cubeb = 2,
     OpenAL = 3,
-    SDL2 = 4,
+    SDL3 = 4,
 };
 
 struct SinkDetails {

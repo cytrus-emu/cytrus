@@ -15,13 +15,13 @@ namespace Core {
 class System;
 }
 
-class EmuWindow_SDL2 : public Frontend::EmuWindow {
+class EmuWindow_SDL3 : public Frontend::EmuWindow {
 public:
-    explicit EmuWindow_SDL2(Core::System& system_, bool is_secondary);
-    ~EmuWindow_SDL2();
+    explicit EmuWindow_SDL3(Core::System& system_, bool is_secondary);
+    ~EmuWindow_SDL3();
 
-    /// Initializes SDL2
-    static void InitializeSDL2();
+    /// Initializes SDL3
+    static void InitializeSDL3();
 
     /// Presents the most recent frame from the video backend
     virtual void Present() {}
@@ -40,13 +40,13 @@ protected:
     u32 GetEventWindowId(const SDL_Event& event) const;
 
     /// Called by PollEvents when a key is pressed or released.
-    void OnKeyEvent(int key, u8 state);
+    void OnKeyEvent(int key, bool state);
 
     /// Called by PollEvents when the mouse moves.
-    void OnMouseMotion(s32 x, s32 y);
+    void OnMouseMotion(float x, float y);
 
     /// Called by PollEvents when a mouse button is pressed or released
-    void OnMouseButton(u32 button, u8 state, s32 x, s32 y);
+    void OnMouseButton(u32 button, bool state, float x, float y);
 
     /// Translates pixel position (0..1) to pixel positions
     std::pair<unsigned, unsigned> TouchToPixelPos(float touch_x, float touch_y) const;
@@ -75,17 +75,17 @@ protected:
     /// Is the window still open?
     bool is_open = true;
 
-    /// Internal SDL2 render window
+    /// Internal SDL3 render window
     SDL_Window* render_window;
 
-    /// Internal SDL2 window ID
+    /// Internal SDL3 window ID
     u32 render_window_id{};
 
     /// Fake hidden window for the core context
     SDL_Window* dummy_window;
 
     /// Keeps track of how often to update the title bar during gameplay
-    u32 last_time = 0;
+    u64 last_time = 0;
 
     Core::System& system;
 };

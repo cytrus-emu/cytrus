@@ -6,31 +6,27 @@
 #include <cstdlib>
 #include <string>
 #define SDL_MAIN_HANDLED
-#include <SDL.h>
-#include <SDL_rect.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_rect.h>
 #include "common/scm_rev.h"
 #include "common/settings.h"
 #include "core/core.h"
 #include "core/frontend/emu_window.h"
-#include "cytrus/emu_window/emu_window_sdl2_sw.h"
+#include "cytrus/emu_window/emu_window_sdl3_sw.h"
 #include "video_core/gpu.h"
 #include "video_core/renderer_software/renderer_software.h"
 
 class DummyContext : public Frontend::GraphicsContext {};
 
-EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, bool is_secondary)
-    : EmuWindow_SDL2{system_, is_secondary}, system{system_} {
+EmuWindow_SDL3_SW::EmuWindow_SDL3_SW(Core::System& system_, bool fullscreen, bool is_secondary)
+    : EmuWindow_SDL3{system_, is_secondary}, system{system_} {
     std::string window_title = fmt::format("Cytrus {} | {}-{}", Common::g_build_fullname,
                                            Common::g_scm_branch, Common::g_scm_desc);
-    render_window =
-        SDL_CreateWindow(window_title.c_str(),
-                         SDL_WINDOWPOS_UNDEFINED, // x position
-                         SDL_WINDOWPOS_UNDEFINED, // y position
-                         Core::kScreenTopWidth, Core::kScreenTopHeight + Core::kScreenBottomHeight,
-                         SDL_WINDOW_SHOWN);
+    render_window = SDL_CreateWindow(window_title.c_str(), Core::kScreenTopWidth,
+                                     Core::kScreenTopHeight + Core::kScreenBottomHeight, 0);
 
     if (render_window == nullptr) {
-        LOG_CRITICAL(Frontend, "Failed to create SDL2 window: {}", SDL_GetError());
+        LOG_CRITICAL(Frontend, "Failed to create SDL3 window: {}", SDL_GetError());
         exit(1);
     }
 
@@ -38,7 +34,7 @@ EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, boo
     renderer = SDL_CreateSoftwareRenderer(window_surface);
 
     if (renderer == nullptr) {
-        LOG_CRITICAL(Frontend, "Failed to create SDL2 software renderer: {}", SDL_GetError());
+        LOG_CRITICAL(Frontend, "Failed to create SDL3 software renderer: {}", SDL_GetError());
         exit(1);
     }
 
@@ -53,16 +49,16 @@ EmuWindow_SDL2_SW::EmuWindow_SDL2_SW(Core::System& system_, bool fullscreen, boo
     SDL_PumpEvents();
 }
 
-EmuWindow_SDL2_SW::~EmuWindow_SDL2_SW() {
+EmuWindow_SDL3_SW::~EmuWindow_SDL3_SW() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(render_window);
 }
 
-std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL2_SW::CreateSharedContext() const {
+std::unique_ptr<Frontend::GraphicsContext> EmuWindow_SDL3_SW::CreateSharedContext() const {
     return std::make_unique<DummyContext>();
 }
 
-void EmuWindow_SDL2_SW::Present() {
+void EmuWindow_SDL3_SW::Present() {
     const auto layout{Layout::DefaultFrameLayout(
         Core::kScreenTopWidth, Core::kScreenTopHeight + Core::kScreenBottomHeight, false, false)};
 
@@ -83,7 +79,7 @@ void EmuWindow_SDL2_SW::Present() {
                               static_cast<int>(dst_rect.GetHeight())};
             SDL_Surface* screen = LoadFramebuffer(screen_id);
             SDL_BlitSurface(screen, nullptr, window_surface, &sdl_rect);
-            SDL_FreeSurface(screen);
+            SDL_DestroySurface(screen);
         };
 
         draw_screen(ScreenId::TopLeft);
@@ -94,13 +90,12 @@ void EmuWindow_SDL2_SW::Present() {
     }
 }
 
-SDL_Surface* EmuWindow_SDL2_SW::LoadFramebuffer(VideoCore::ScreenId screen_id) {
+SDL_Surface* EmuWindow_SDL3_SW::LoadFramebuffer(VideoCore::ScreenId screen_id) {
     const auto& renderer = static_cast<SwRenderer::RendererSoftware&>(system.GPU().Renderer());
     const auto& info = renderer.Screen(screen_id);
     const int width = static_cast<int>(info.width);
     const int height = static_cast<int>(info.height);
-    SDL_Surface* surface =
-        SDL_CreateRGBSurfaceWithFormat(0, width, height, 0, SDL_PIXELFORMAT_ABGR8888);
+    SDL_Surface* surface = SDL_CreateSurface(width, height, SDL_PIXELFORMAT_ABGR8888);
     SDL_LockSurface(surface);
     std::memcpy(surface->pixels, info.pixels.data(), info.pixels.size());
     SDL_UnlockSurface(surface);

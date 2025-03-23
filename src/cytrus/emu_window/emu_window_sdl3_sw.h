@@ -5,7 +5,7 @@
 #pragma once
 
 #include <memory>
-#include "cytrus/emu_window/emu_window_sdl2.h"
+#include "cytrus/emu_window/emu_window_sdl3.h"
 
 struct SDL_Renderer;
 struct SDL_Surface;
@@ -18,10 +18,10 @@ namespace Core {
 class System;
 }
 
-class EmuWindow_SDL2_SW : public EmuWindow_SDL2 {
+class EmuWindow_SDL3_SW : public EmuWindow_SDL3 {
 public:
-    explicit EmuWindow_SDL2_SW(Core::System& system, bool fullscreen, bool is_secondary);
-    ~EmuWindow_SDL2_SW();
+    explicit EmuWindow_SDL3_SW(Core::System& system, bool fullscreen, bool is_secondary);
+    ~EmuWindow_SDL3_SW();
 
     void Present() override;
     std::unique_ptr<GraphicsContext> CreateSharedContext() const override;

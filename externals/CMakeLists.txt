@@ -183,9 +183,9 @@ endif()
 # Teakra
 add_subdirectory(teakra EXCLUDE_FROM_ALL)
 
-# SDL2
-if (ENABLE_SDL2 AND NOT USE_SYSTEM_SDL2)
-    add_subdirectory(sdl2)
+# SDL3
+if (ENABLE_SDL3 AND NOT USE_SYSTEM_SDL3)
+    add_subdirectory(sdl3)
 endif()
 
 # libusb

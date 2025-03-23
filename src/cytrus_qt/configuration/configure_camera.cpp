@@ -86,7 +86,7 @@ void ConfigureCamera::ConnectEvents() {
     });
     connect(ui->toolButton, &QToolButton::clicked, this, &ConfigureCamera::OnToolButtonClicked);
     connect(ui->preview_button, &QPushButton::clicked, this, [this] { StartPreviewing(); });
-    connect(ui->prompt_before_load, &QCheckBox::stateChanged, this, [this](int state) {
+    connect(ui->prompt_before_load, &QCheckBox::checkStateChanged, this, [this](int state) {
         ui->camera_file->setDisabled(state == Qt::Checked);
         ui->toolButton->setDisabled(state == Qt::Checked);
         if (state == Qt::Checked) {
